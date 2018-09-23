@@ -113,14 +113,20 @@ void SystemClass::Run()
 		}
 		else
 		{
-			// Otherwise do the frame processing.
+			// Otherwise do the frame processing.  If frame processing fails then exit.
 			result = Frame();
 			if(!result)
 			{
+				MessageBox(m_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
 				done = true;
 			}
 		}
 
+		// Check if the user pressed escape and wants to quit.
+		if(m_Input->IsKeyDown(VK_ESCAPE))
+		{
+			done = true;
+		}
 	}
 
 	return;
@@ -132,14 +138,11 @@ bool SystemClass::Frame()
 	bool result;
 
 
-	// Check if the user pressed escape and wants to exit the application.
-	if(m_Input->IsKeyDown(VK_ESCAPE))
-	{
-		return false;
-	}
-
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
+	m_Graphics->Frame();
+
+	// Finally render the graphics to the screen.
+	result = m_Graphics->Render();
 	if(!result)
 	{
 		return false;
